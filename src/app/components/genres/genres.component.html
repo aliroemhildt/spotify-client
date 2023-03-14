@@ -1,0 +1,5 @@
+<h1>Genres:</h1>
+<p *ngIf="loading">Loading genres...</p>
+<div>
+  <p *ngFor="let genre of genres">{{ genre }}</p>
+</div>

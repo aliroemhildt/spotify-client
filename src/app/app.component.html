@@ -1,0 +1,9 @@
+<div>
+  <button *ngIf="!loggedIn" (click)="requestAuthCode()">login to spotify</button>
+  <div *ngIf="loggedIn && accessData.access_token">
+    <app-profile [accessToken]="accessData.access_token"></app-profile>
+    <app-genres [accessToken]="accessData.access_token"></app-genres>
+  </div>
+</div>
+
+<router-outlet></router-outlet>
