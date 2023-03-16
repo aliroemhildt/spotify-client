@@ -26,8 +26,6 @@ export class GenresComponent implements OnInit {
   constructor(private apollo: Apollo) { }
 
   ngOnInit(): void {
-    console.log(this.accessToken)
-
     this.querySubscription = this.apollo
       .watchQuery({
       query: GET_GENRES,
