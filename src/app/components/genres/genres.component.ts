@@ -18,7 +18,7 @@ const GET_GENRES = gql`
 export class GenresComponent implements OnInit {
   @Input() accessToken: String = '';
   
-  genres = [];
+  genres: String[] = [];
   loading = true;
   error: any;
   querySubscription: Subscription | null = null; //figure out how to remove null from this, do I need to use a subscription?
@@ -26,6 +26,8 @@ export class GenresComponent implements OnInit {
   constructor(private apollo: Apollo) { }
 
   ngOnInit() {
+    console.log(this.accessToken)
+
     this.querySubscription = this.apollo
       .watchQuery({
       query: GET_GENRES,
