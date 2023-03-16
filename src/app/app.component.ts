@@ -29,7 +29,7 @@ export class AppComponent {
   scopes_url_param = this.scopes.join('%20');
   // state
 
-  ngOnInit() {
+  ngOnInit(): void {
     if (window.location.search && !this.authCode) {
       this.authCode = this.getAuthCode();
       this.getAccessToken(this.authCode);
