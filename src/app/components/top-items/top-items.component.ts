@@ -19,8 +19,8 @@ interface Image {
 }
 
 const GET_TOP_ARTISTS = gql`
-  query getTopArtists($token: String!){
-    getTopArtists(token: $token) {
+  query getTopArtists($token: String!, $itemType: String!, timeRange: String!){
+    getTopItems(token: $token) {
       items {
         name
         images {
@@ -42,6 +42,8 @@ const GET_TOP_ARTISTS = gql`
 export class TopItemsComponent implements OnInit {
   @Input() accessToken: String = '';
 
+  timeRange: String = "short_term"
+  itemType: String = "artists"
   topArtists: TopArtists = {items: []}
   loading = true;
   error: any;
@@ -50,21 +52,22 @@ export class TopItemsComponent implements OnInit {
   constructor(private apollo: Apollo) { }
 
   ngOnInit(): void {
-    console.log(this.accessToken)
+    console.log(this.accessToken, this.itemType, this.timeRange)
 
-    this.querySubscription = this.apollo
-      .watchQuery({
-        query: GET_TOP_ARTISTS,
-        variables: {
-          token: this.accessToken
-        }
-      })
-      .valueChanges.subscribe((result: any) => {
-        console.log(result)
-        this.topArtists = result.data.getTopArtists;
-        this.loading = result.loading;
-        this.error = result.error;
-      })
+    // this.querySubscription = this.apollo
+    //   .watchQuery({
+    //     query: GET_TOP_ARTISTS,
+    //     variables: {
+    //       token: this.accessToken,
+    //       itemType: this.itemType,
+    //       timeRange: this.timeRange
+    //     }
+    //   })
+    //   .valueChanges.subscribe((result: any) => {
+    //     this.topArtists = result.data.getTopArtists;
+    //     this.loading = result.loading;
+    //     this.error = result.error;
+    //   })
   }
 
   ngOnDestroy() {
