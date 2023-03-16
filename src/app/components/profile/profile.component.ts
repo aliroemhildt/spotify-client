@@ -46,16 +46,15 @@ export class ProfileComponent implements OnInit {
   ngOnInit(): void {
     this.querySubscription = this.apollo
       .watchQuery({
-      query: GET_CURRENT_USER,
-      variables: {
-        token: this.accessToken
-      }
-    })
-    .valueChanges.subscribe((result: any) => {
-      this.currentUser = result.data.getCurrentUser;
-      this.loading = result.loading;
-      this.error = result.error;
-    })
+        query: GET_CURRENT_USER,
+        variables: {
+          token: this.accessToken
+        }
+      })
+      .valueChanges.subscribe((result: any) => {
+        this.currentUser = result.data.getCurrentUser;
+        this.loading = result.loading;
+        this.error = result.error;
+      })
   }
-
 }
