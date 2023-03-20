@@ -1,4 +1,11 @@
 <div>
-  <h1>Top Artists:</h1>
-  <p *ngFor="let item of topArtists.items">{{ item.name }}</p>
+  <div *ngIf="itemType=='artists'">
+    <h1>Top Artists:</h1>
+    <p *ngFor="let item of topItems">{{ item.name }}</p>
+  </div>
+  <div *ngIf="itemType=='tracks'">
+    <h1>Top Tracks:</h1>
+    <p *ngFor="let item of topItems">{{ item.name }}</p>
+  </div>
+  
 </div>

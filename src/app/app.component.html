@@ -2,8 +2,9 @@
   <button *ngIf="!loggedIn" (click)="requestAuthCode()">login to spotify</button>
   <div *ngIf="loggedIn && accessData.access_token">
     <app-profile [accessToken]="accessData.access_token"></app-profile>
-    <app-top-items [accessToken]="accessData.access_token"></app-top-items>
-    <app-genres [accessToken]="accessData.access_token"></app-genres>
+    <app-top-items [accessToken]="accessData.access_token" itemType="artists"></app-top-items>
+    <app-top-items [accessToken]="accessData.access_token" itemType="tracks"></app-top-items>
+    <!-- <app-genres [accessToken]="accessData.access_token"></app-genres> -->
   </div>
 </div>
 

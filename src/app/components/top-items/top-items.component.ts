@@ -2,14 +2,15 @@ import { Component, OnInit, Input } from '@angular/core';
 import { Apollo, gql } from 'apollo-angular';
 import { Subscription } from 'rxjs';
 
-interface TopArtists {
-  items: Item[]
+interface Artist {
+  name: String
+  images: Image
+  genres: String[]
 }
 
-interface Item {
+interface Track {
   name: String
-  images: Image[]
-  genres: String[]
+  artists: Artist[]
 }
 
 interface Image {
@@ -18,17 +19,35 @@ interface Image {
   width: String
 }
 
+
 const GET_TOP_ARTISTS = gql`
-  query getTopArtists($token: String!){
-    getTopArtists(token: $token) {
+  query getTopArtists($token: String!, $itemType: String!, $timeRange: String!){
+    getTopItems(token: $token, itemType: $itemType, timeRange: $timeRange) {
       items {
-        name
+        ... on Artist {
+          name
         images {
           url
           height
           width
         }
         genres
+        }
+      }
+    }
+  }
+`;
+
+const GET_TOP_TRACKS = gql`
+  query getTopTracks($token: String!, $itemType: String!, $timeRange: String!){
+    getTopItems(token: $token, itemType: $itemType, timeRange: $timeRange) {
+      items {
+        ... on Track {
+        name
+        artists {
+          name
+        }
+      }
       }
     }
   }
@@ -41,8 +60,10 @@ const GET_TOP_ARTISTS = gql`
 })
 export class TopItemsComponent implements OnInit {
   @Input() accessToken: String = '';
+  @Input() itemType: String = '';
 
-  topArtists: TopArtists = {items: []}
+  timeRange: String = "short_term"
+  topItems: (Artist | Track)[] | [] = []
   loading = true;
   error: any;
   querySubscription: Subscription | null = null;
@@ -50,21 +71,38 @@ export class TopItemsComponent implements OnInit {
   constructor(private apollo: Apollo) { }
 
   ngOnInit(): void {
-    console.log(this.accessToken)
-
-    this.querySubscription = this.apollo
+    if (this.itemType == 'artists') {
+      this.querySubscription = this.apollo
       .watchQuery({
         query: GET_TOP_ARTISTS,
         variables: {
-          token: this.accessToken
+          token: this.accessToken,
+          itemType: this.itemType,
+          timeRange: this.timeRange
         }
       })
       .valueChanges.subscribe((result: any) => {
-        console.log(result)
-        this.topArtists = result.data.getTopArtists;
+        this.topItems = result.data.getTopItems.items;
         this.loading = result.loading;
         this.error = result.error;
       })
+    }
+    if (this.itemType == 'tracks') {
+      this.querySubscription = this.apollo
+      .watchQuery({
+        query: GET_TOP_TRACKS,
+        variables: {
+          token: this.accessToken,
+          itemType: this.itemType,
+          timeRange: this.timeRange
+        }
+      })
+      .valueChanges.subscribe((result: any) => {
+        this.topItems = result.data.getTopItems.items;
+        this.loading = result.loading;
+        this.error = result.error;
+      })
+    }
   }
 
   ngOnDestroy() {
