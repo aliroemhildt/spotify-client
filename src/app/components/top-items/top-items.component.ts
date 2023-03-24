@@ -92,7 +92,7 @@ export class TopItemsComponent implements OnInit, OnDestroy {
     });
 
     this.querySubscription = this.topItemsQuery
-      .valueChanges.subscribe((result: any) => {
+      .valueChanges.subscribe((result: any) => { // error coming from this line when another account is used
         this.topItems = result.data.getTopItems.items;
         this.loading = result.loading;
         this.error = result.error;

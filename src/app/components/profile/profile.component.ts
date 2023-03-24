@@ -51,7 +51,7 @@ export class ProfileComponent implements OnInit {
           token: this.accessToken
         }
       })
-      .valueChanges.subscribe((result: any) => {
+      .valueChanges.subscribe((result: any) => { //error coming from this line when another account is used
         this.currentUser = result.data.getCurrentUser;
         this.loading = result.loading;
         this.error = result.error;
