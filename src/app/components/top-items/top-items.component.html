@@ -1,4 +1,7 @@
 <div>
+  <button (click)="changeTime('short_term')">This Month</button>
+  <button (click)="changeTime('medium_term')">This Year</button>
+  <button (click)="changeTime('long_term')">All Time</button>
   <div *ngIf="itemType=='artists'">
     <h1>Top Artists:</h1>
     <p *ngFor="let item of topItems">{{ item.name }}</p>
