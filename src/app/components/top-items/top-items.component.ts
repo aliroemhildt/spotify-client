@@ -1,5 +1,5 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { Apollo, gql } from 'apollo-angular';
+import { Component, OnInit, OnDestroy, Input } from '@angular/core';
+import { Apollo, gql, QueryRef } from 'apollo-angular';
 import { Subscription } from 'rxjs';
 
 interface Artist {
@@ -58,7 +58,7 @@ const GET_TOP_TRACKS = gql`
   templateUrl: './top-items.component.html',
   styleUrls: ['./top-items.component.scss']
 })
-export class TopItemsComponent implements OnInit {
+export class TopItemsComponent implements OnInit, OnDestroy {
   @Input() accessToken: String = '';
   @Input() itemType: String = '';
 
@@ -66,48 +66,47 @@ export class TopItemsComponent implements OnInit {
   topItems: (Artist | Track)[] | [] = []
   loading = true;
   error: any;
-  querySubscription: Subscription | null = null;
+  topItemsQuery!: QueryRef<any>;
+  
+  private querySubscription!: Subscription;
 
   constructor(private apollo: Apollo) { }
 
   ngOnInit(): void {
+    let myQuery: any = null;
+    
     if (this.itemType == 'artists') {
-      this.querySubscription = this.apollo
-      .watchQuery({
-        query: GET_TOP_ARTISTS,
-        variables: {
-          token: this.accessToken,
-          itemType: this.itemType,
-          timeRange: this.timeRange
-        }
-      })
-      .valueChanges.subscribe((result: any) => {
-        this.topItems = result.data.getTopItems.items;
-        this.loading = result.loading;
-        this.error = result.error;
-      })
+      myQuery = GET_TOP_ARTISTS;
     }
     if (this.itemType == 'tracks') {
-      this.querySubscription = this.apollo
-      .watchQuery({
-        query: GET_TOP_TRACKS,
-        variables: {
-          token: this.accessToken,
-          itemType: this.itemType,
-          timeRange: this.timeRange
-        }
-      })
+      myQuery = GET_TOP_TRACKS;
+    }
+
+    this.topItemsQuery = this.apollo.watchQuery<any>({
+      query: myQuery,
+      variables: {
+        token: this.accessToken,
+        itemType: this.itemType,
+        timeRange: this.timeRange
+      }
+    });
+
+    this.querySubscription = this.topItemsQuery
       .valueChanges.subscribe((result: any) => {
         this.topItems = result.data.getTopItems.items;
         this.loading = result.loading;
         this.error = result.error;
-      })
-    }
+      });
   }
 
   ngOnDestroy() {
     if (this.querySubscription) {
       this.querySubscription.unsubscribe();
     }
+  }
+
+  changeTime(newTimeRange: String) {
+    this.timeRange = newTimeRange;
+    this.topItemsQuery.refetch({ timeRange: this.timeRange });
   }
 }
